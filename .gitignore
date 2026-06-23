@@ -1,0 +1,41 @@
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.python-version
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+.Python
+
+# Data and generated outputs
+data/raw/
+data/vector_db/
+data/search_results/
+logs/
+*.log
+*.sqlite
+*.db
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS and temporary files
+.DS_Store
+Thumbs.db
+*~
+*.swp
+*.swo
+
+# Ignore parent repo metadata if present
+.git/
