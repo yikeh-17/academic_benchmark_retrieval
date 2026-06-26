@@ -1,0 +1,92 @@
+EvalAgent Metadata Label Inventory
+======================================================================
+Source file: /home/tju/academic_benchmark_retrieval/data/processed/academic_5_merged.jsonl
+Valid records: 2500
+Invalid JSON lines: 0
+
+[dataset_name]
+----------------------------------------------------------------------
+QCalEval	500
+ScienceQA	500
+ChartQA	500
+PlotQA	500
+MathVista	500
+
+[domain]
+----------------------------------------------------------------------
+science_education	500
+chart_reasoning	500
+plot_reasoning	500
+<missing>	500
+quantum_physics	239
+general_science	207
+quantum_calibration	32
+engineering_calibration	22
+
+[task_type]
+----------------------------------------------------------------------
+science_visual_qa	500
+plot_data_extraction	500
+<missing>	500
+chart_numeric_qa	245
+scientific_reasoning	233
+chart_qa	98
+chart_comparison	94
+fit_assessment	83
+experiment_status	73
+chart_fact_verification	56
+figure_description	48
+trend_analysis	44
+parameter_extraction	18
+chart_trend_analysis	7
+experiment_status_decision	1
+
+[image_type]
+----------------------------------------------------------------------
+<missing>	1000
+chart	502
+scatter_plot	500
+educational_image	369
+map	129
+
+[difficulty]
+----------------------------------------------------------------------
+hard	699
+medium	557
+unknown	500
+<missing>	500
+easy	244
+
+[modality]
+----------------------------------------------------------------------
+image+text	2000
+<missing>	500
+
+[ability]
+----------------------------------------------------------------------
+data_extraction	925
+plot_understanding	908
+chart_understanding	631
+science_knowledge	500
+visual_reasoning	500
+question_answering	500
+visual_question_answering	500
+structural_parsing	500
+visual_grounding	500
+<missing>	500
+scientific_reasoning	434
+numerical_reasoning	407
+experiment_understanding	233
+data_interpretation	131
+map_understanding	129
+spatial_reasoning	129
+trend_analysis	119
+fit_assessment	83
+numerical_comparison	79
+experiment_diagnosis	74
+status_classification	73
+scientific_figure_understanding	66
+chart_fact_verification	56
+visual_description	48
+parameter_extraction	18
+decision_making	1

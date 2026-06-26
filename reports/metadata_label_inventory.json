@@ -1,0 +1,285 @@
+{
+  "source_file": "/home/tju/academic_benchmark_retrieval/data/processed/academic_5_merged.jsonl",
+  "total_records": 2500,
+  "invalid_lines": 0,
+  "fields": {
+    "dataset_name": [
+      {
+        "label": "QCalEval",
+        "count": 500
+      },
+      {
+        "label": "ScienceQA",
+        "count": 500
+      },
+      {
+        "label": "ChartQA",
+        "count": 500
+      },
+      {
+        "label": "PlotQA",
+        "count": 500
+      },
+      {
+        "label": "MathVista",
+        "count": 500
+      }
+    ],
+    "domain": [
+      {
+        "label": "science_education",
+        "count": 500
+      },
+      {
+        "label": "chart_reasoning",
+        "count": 500
+      },
+      {
+        "label": "plot_reasoning",
+        "count": 500
+      },
+      {
+        "label": "<missing>",
+        "count": 500
+      },
+      {
+        "label": "quantum_physics",
+        "count": 239
+      },
+      {
+        "label": "general_science",
+        "count": 207
+      },
+      {
+        "label": "quantum_calibration",
+        "count": 32
+      },
+      {
+        "label": "engineering_calibration",
+        "count": 22
+      }
+    ],
+    "task_type": [
+      {
+        "label": "science_visual_qa",
+        "count": 500
+      },
+      {
+        "label": "plot_data_extraction",
+        "count": 500
+      },
+      {
+        "label": "<missing>",
+        "count": 500
+      },
+      {
+        "label": "chart_numeric_qa",
+        "count": 245
+      },
+      {
+        "label": "scientific_reasoning",
+        "count": 233
+      },
+      {
+        "label": "chart_qa",
+        "count": 98
+      },
+      {
+        "label": "chart_comparison",
+        "count": 94
+      },
+      {
+        "label": "fit_assessment",
+        "count": 83
+      },
+      {
+        "label": "experiment_status",
+        "count": 73
+      },
+      {
+        "label": "chart_fact_verification",
+        "count": 56
+      },
+      {
+        "label": "figure_description",
+        "count": 48
+      },
+      {
+        "label": "trend_analysis",
+        "count": 44
+      },
+      {
+        "label": "parameter_extraction",
+        "count": 18
+      },
+      {
+        "label": "chart_trend_analysis",
+        "count": 7
+      },
+      {
+        "label": "experiment_status_decision",
+        "count": 1
+      }
+    ],
+    "image_type": [
+      {
+        "label": "<missing>",
+        "count": 1000
+      },
+      {
+        "label": "chart",
+        "count": 502
+      },
+      {
+        "label": "scatter_plot",
+        "count": 500
+      },
+      {
+        "label": "educational_image",
+        "count": 369
+      },
+      {
+        "label": "map",
+        "count": 129
+      }
+    ],
+    "difficulty": [
+      {
+        "label": "hard",
+        "count": 699
+      },
+      {
+        "label": "medium",
+        "count": 557
+      },
+      {
+        "label": "unknown",
+        "count": 500
+      },
+      {
+        "label": "<missing>",
+        "count": 500
+      },
+      {
+        "label": "easy",
+        "count": 244
+      }
+    ],
+    "modality": [
+      {
+        "label": "image+text",
+        "count": 2000
+      },
+      {
+        "label": "<missing>",
+        "count": 500
+      }
+    ],
+    "ability": [
+      {
+        "label": "data_extraction",
+        "count": 925
+      },
+      {
+        "label": "plot_understanding",
+        "count": 908
+      },
+      {
+        "label": "chart_understanding",
+        "count": 631
+      },
+      {
+        "label": "science_knowledge",
+        "count": 500
+      },
+      {
+        "label": "visual_reasoning",
+        "count": 500
+      },
+      {
+        "label": "question_answering",
+        "count": 500
+      },
+      {
+        "label": "visual_question_answering",
+        "count": 500
+      },
+      {
+        "label": "structural_parsing",
+        "count": 500
+      },
+      {
+        "label": "visual_grounding",
+        "count": 500
+      },
+      {
+        "label": "<missing>",
+        "count": 500
+      },
+      {
+        "label": "scientific_reasoning",
+        "count": 434
+      },
+      {
+        "label": "numerical_reasoning",
+        "count": 407
+      },
+      {
+        "label": "experiment_understanding",
+        "count": 233
+      },
+      {
+        "label": "data_interpretation",
+        "count": 131
+      },
+      {
+        "label": "map_understanding",
+        "count": 129
+      },
+      {
+        "label": "spatial_reasoning",
+        "count": 129
+      },
+      {
+        "label": "trend_analysis",
+        "count": 119
+      },
+      {
+        "label": "fit_assessment",
+        "count": 83
+      },
+      {
+        "label": "numerical_comparison",
+        "count": 79
+      },
+      {
+        "label": "experiment_diagnosis",
+        "count": 74
+      },
+      {
+        "label": "status_classification",
+        "count": 73
+      },
+      {
+        "label": "scientific_figure_understanding",
+        "count": 66
+      },
+      {
+        "label": "chart_fact_verification",
+        "count": 56
+      },
+      {
+        "label": "visual_description",
+        "count": 48
+      },
+      {
+        "label": "parameter_extraction",
+        "count": 18
+      },
+      {
+        "label": "decision_making",
+        "count": 1
+      }
+    ]
+  }
+}
