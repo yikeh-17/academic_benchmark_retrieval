@@ -1,155 +1,199 @@
-# Academic Benchmark Retrieval
+# EvalAgent: Intelligent Multimodal Benchmark Retrieval and Evaluation Planning
 
-A sample-level multimodal benchmark retrieval and dataset recommendation system built on five academic visual reasoning datasets.
+EvalAgent is an intelligent benchmark recommendation system for multimodal model evaluation.
 
-This project standardizes heterogeneous multimodal benchmark data into a unified representation, generates fused image-text embeddings with Qwen3-VL Embedding, builds a local Zvec vector index, retrieves representative samples based on model capability descriptions, and aggregates retrieval results into dataset-level recommendations.
+The system converts natural-language evaluation requirements into structured capability profiles, retrieves relevant samples from multiple academic benchmarks using multimodal embeddings and Zvec vector search, and produces a ranked evaluation set with dataset, task, ability, domain, and difficulty coverage analysis.
 
-The current implementation completes the full pipeline from raw benchmark data to searchable vector database and recommendation output.
+The project currently integrates five multimodal academic benchmarks:
 
----
+- QCalEval
+- ScienceQA
+- ChartQA
+- PlotQA
+- MathVista
 
-## Overview
-
-Modern multimodal models are often evaluated on a wide range of benchmarks, but selecting an appropriate benchmark remains difficult because datasets differ substantially in domain, task type, visual structure, reasoning requirements, and answer format.
-
-This project addresses that problem by building a sample-level retrieval system over multiple academic benchmarks.
-
-Instead of treating each benchmark as a single label, the system represents every sample through:
-
-- its image;
-- natural-language question;
-- task type;
-- domain;
-- reasoning ability;
-- answer format;
-- structured embedding text.
-
-A user can describe the capability they want to evaluate, optionally provide a query image, and retrieve the most relevant benchmark samples. The retrieved samples are then aggregated to identify the datasets most closely aligned with the target capability.
+A total of 2,500 benchmark samples are indexed, with 500 samples selected from each dataset.
 
 ---
 
-## Key Capabilities
+## 1. Project Overview
 
-The system currently supports:
+Evaluating multimodal models often requires manually selecting datasets, identifying relevant capabilities, and assembling representative test samples.
 
-- unified preprocessing of heterogeneous multimodal benchmarks;
-- sample-level indexing across five datasets;
-- fused image-text embedding generation;
-- resumable API-based embedding construction;
-- local vector indexing with Zvec;
-- text-only and image-text retrieval;
-- metadata-based filtering;
-- dataset-level recommendation aggregation;
-- representative sample selection;
-- failed-request logging and recovery;
-- end-to-end reproducible execution through ordered scripts.
+EvalAgent automates this process.
 
----
-
-## Academic-5 Benchmark Collection
-
-The current database contains five multimodal academic benchmarks:
-
-| Dataset | Primary capability | Samples |
-|---|---|---:|
-| QCalEval | Quantum calibration chart understanding and scientific reasoning | 500 |
-| ScienceQA | Science visual question answering and knowledge reasoning | 500 |
-| ChartQA | Chart understanding and numerical reasoning | 500 |
-| PlotQA | Scientific plot interpretation and data reasoning | 500 |
-| MathVista | Mathematical visual reasoning and multimodal problem solving | 500 |
-| **Total** |  | **2,500** |
-
-The collection is intentionally balanced at 500 samples per dataset to support controlled retrieval and dataset-level comparison.
-
-Each sample is indexed independently rather than assigning only one embedding to an entire dataset. This enables more fine-grained matching between a query and the specific tasks, domains, visual patterns, and reasoning abilities present in the benchmark.
-
----
-
-## System Architecture
+Given a natural-language requirement such as:
 
 ```text
-Raw benchmark datasets
-        ↓
-Dataset-specific preprocessing
-        ↓
-Unified sample-level JSONL records
-        ↓
-Academic-5 merged collection
-        ↓
-Qwen3-VL image-text embeddings
-        ↓
-1024-dimensional vector matrix
-        ↓
-Zvec local vector index
-        ↓
-Top-k sample retrieval
-        ↓
-Dataset-level aggregation
-        ↓
-Recommended benchmarks and representative samples
+I want to evaluate a multimodal model for understanding quantum
+experiment plots, with emphasis on trend analysis, parameter
+extraction, and scientific reasoning. Prefer medium and hard samples,
+with a budget of 20 examples.
 ```
 
-The system separates data preparation, embedding generation, indexing, retrieval, and recommendation into independent stages. This makes it possible to replace individual components, such as the embedding model or vector database, without rebuilding the entire pipeline architecture.
+EvalAgent automatically:
+
+1. Parses the evaluation requirement.
+2. Extracts target domains, tasks, abilities, difficulty preferences, and evaluation budget.
+3. Builds an embedding-oriented retrieval query.
+4. Generates a 1,024-dimensional multimodal query embedding.
+5. Searches the Academic-5 Zvec vector database.
+6. Reranks candidates using semantic similarity and metadata matching.
+7. Selects the final evaluation samples.
+8. Produces dataset allocation and capability coverage statistics.
+9. Saves the evaluation recommendation as structured JSON.
 
 ---
 
-## Current Results
-
-The completed system contains:
+## 2. System Architecture
 
 ```text
-Datasets:               5
-Samples per dataset:    500
-Total indexed samples:  2,500
-Embedding model:        qwen3-vl-embedding
-Embedding dimension:    1,024
-Embedding dtype:        float32
-Failed embeddings:      0
-Vector index:           Zvec
+Natural-Language Evaluation Requirement
+                    |
+                    v
+        Requirement Parsing Agent
+                    |
+                    v
+        Structured Evaluation Profile
+                    |
+                    v
+        Retrieval Query Construction
+                    |
+                    v
+       Qwen3-VL Embedding Generation
+                    |
+                    v
+          Zvec Vector Retrieval
+                    |
+                    v
+       Metadata-Aware Candidate Reranking
+                    |
+                    v
+     Recommended Evaluation Sample Set
+                    |
+                    v
+ Dataset / Task / Ability / Difficulty Report
 ```
-
-Final embedding matrix:
-
-```text
-Shape: (2500, 1024)
-Dtype: float32
-NaN values: 0
-Inf values: 0
-```
-
-The embedding rows and metadata rows are aligned one-to-one:
-
-```text
-Embedding records: 2500
-Metadata records:  2500
-Failed records:    0
-```
-
-The full pipeline has been completed and verified, including:
-
-- preprocessing;
-- dataset merging;
-- multimodal embedding generation;
-- Zvec index construction;
-- similarity retrieval;
-- dataset recommendation aggregation.
 
 ---
 
-## Repository Structure
+## 3. Main Features
+
+### Natural-Language Requirement Parsing
+
+EvalAgent converts user requirements into a structured profile containing:
+
+```json
+{
+  "model_name": null,
+  "model_description": "",
+  "target_domains": [],
+  "target_tasks": [],
+  "target_abilities": [],
+  "preferred_difficulties": [],
+  "preferred_datasets": [],
+  "evaluation_budget": 20
+}
+```
+
+The current implementation uses deterministic label mapping to provide stable and interpretable outputs.
+
+### Multimodal Embedding Retrieval
+
+The system uses:
+
+```text
+qwen3-vl-embedding
+```
+
+to generate 1,024-dimensional embeddings for benchmark samples and user queries.
+
+The embedding input can contain:
+
+- Text only
+- Image only
+- Text and image
+
+### Zvec Vector Database
+
+All benchmark embeddings are stored in a Zvec collection for efficient nearest-neighbor retrieval.
+
+Current vector database:
+
+```text
+Number of samples: 2,500
+Embedding dimension: 1,024
+Vector database: Zvec
+Collection: academic_collection
+```
+
+### Metadata-Aware Reranking
+
+After vector retrieval, EvalAgent reranks candidates using:
+
+- Semantic similarity
+- Dataset preference
+- Domain matching
+- Task matching
+- Ability matching
+- Difficulty preference
+
+The final score combines vector similarity with structured requirement matching.
+
+### Evaluation Coverage Analysis
+
+The final output includes:
+
+- Recommended datasets
+- Dataset proportions
+- Average similarity
+- Best similarity
+- Domain coverage
+- Task coverage
+- Ability coverage
+- Difficulty distribution
+- Per-sample recommendation reasons
+
+---
+
+## 4. Integrated Benchmarks
+
+| Dataset | Samples | Primary Focus |
+|---|---:|---|
+| QCalEval | 500 | Quantum experiment plots and calibration reasoning |
+| ScienceQA | 500 | Science education and visual question answering |
+| ChartQA | 500 | Chart understanding and numerical question answering |
+| PlotQA | 500 | Scientific plot understanding and data extraction |
+| MathVista | 500 | Mathematical and visual reasoning |
+| **Total** | **2,500** | Multimodal academic evaluation |
+
+---
+
+## 5. Repository Structure
 
 ```text
 academic_benchmark_retrieval/
+├── configs/
+│   └── evalagent/
+│       ├── label_mapping.json
+│       └── profile_schema.json
+│
 ├── data/
-│   ├── raw/
-│   │   └── Raw datasets and image files
 │   ├── processed/
-│   │   └── Unified sample-level JSONL files
-│   └── vector_db/
-│       ├── Embedding matrix
-│       ├── Embedding metadata
-│       ├── Failure logs
-│       └── Zvec collection
+│   │   └── academic_5_merged.jsonl
+│   │
+│   ├── vector_db/
+│   │   ├── academic_5_embeddings.npy
+│   │   ├── academic_5_metadata.jsonl
+│   │   └── academic_5_zvec/
+│   │
+│   └── evaluation_runs/
+│       └── .gitkeep
+│
+├── reports/
+│   ├── metadata_label_inventory.json
+│   └── metadata_label_inventory.txt
+│
 ├── scripts/
 │   ├── 01_prepare_qcaleval.py
 │   ├── 02_prepare_scienceqa.py
@@ -160,84 +204,81 @@ academic_benchmark_retrieval/
 │   ├── 07_build_qwenvl_embeddings.py
 │   ├── 08_build_zvec_index.py
 │   ├── 09_search_zvec.py
-│   └── 10_aggregate_recommendation.py
+│   │
+│   └── evalagent/
+│       ├── 00_export_metadata_labels.py
+│       ├── 00_validate_label_mapping.py
+│       ├── 01_parse_requirement.py
+│       ├── 02_build_retrieval_query.py
+│       └── 03_run_evalagent.py
+│
 ├── .gitignore
 ├── requirements.txt
 └── README.md
 ```
 
-Large datasets, images, generated embeddings, local vector collections, virtual environments, and API credentials are excluded from version control.
-
 ---
 
-## Unified Sample Representation
+## 6. Installation
 
-All datasets are converted into a shared sample-level schema.
-
-A typical record contains:
-
-```json
-{
-  "id": "sample_id",
-  "dataset_name": "DatasetName",
-  "image": "/absolute/path/to/image.png",
-  "question": "Question text",
-  "answer": "Ground-truth answer",
-  "task_type": "task category",
-  "domain": "domain category",
-  "ability": [
-    "visual understanding",
-    "numerical reasoning"
-  ],
-  "text_for_embedding": "Structured text used together with the image for embedding"
-}
-```
-
-The schema preserves dataset-specific information while exposing a common set of retrieval fields.
-
-The `text_for_embedding` field summarizes the sample's task, question, reasoning requirement, domain, and answer format. It is combined with the image through the multimodal embedding interface.
-
----
-
-## Environment
-
-Recommended environment:
-
-- Python 3.11 or 3.12
-- Linux server
-- DashScope API access
-- sufficient disk space for raw images and generated vector files
-
-A local GPU is not required because the current implementation calls the embedding model through the DashScope API.
-
-Create and activate a virtual environment:
+### Clone the repository
 
 ```bash
-cd ~/academic_benchmark_retrieval
-
-python3 -m venv .venv
-source .venv/bin/activate
-
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+git clone https://github.com/yikeh-17/academic_benchmark_retrieval.git
+cd academic_benchmark_retrieval
 ```
 
-Core dependencies include:
+### Create a virtual environment
 
-- `numpy`
-- `requests`
-- `tqdm`
-- `datasets`
-- `Pillow`
-- `zvec`
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+Main dependencies include:
+
+```text
+numpy
+requests
+tqdm
+zvec
+```
 
 ---
 
-## Pipeline
+## 7. API Configuration
 
-### 1. Prepare the five datasets
+The project uses the Alibaba Cloud DashScope API for Qwen3-VL embedding generation.
 
-Run the preprocessing scripts in order:
+Set the API key as an environment variable:
+
+```bash
+export DASHSCOPE_API_KEY="your_api_key"
+```
+
+Confirm that the key is available:
+
+```bash
+if [ -n "$DASHSCOPE_API_KEY" ]; then
+  echo "DASHSCOPE_API_KEY is set"
+else
+  echo "DASHSCOPE_API_KEY is NOT set"
+fi
+```
+
+Do not store the API key directly in source code.
+
+---
+
+## 8. Data Preparation Pipeline
+
+The five datasets are processed independently before being merged.
 
 ```bash
 python scripts/01_prepare_qcaleval.py
@@ -247,421 +288,398 @@ python scripts/04_prepare_plotqa.py
 python scripts/05_prepare_mathvista.py
 ```
 
-Each script:
-
-- reads one source dataset;
-- samples or selects 500 records;
-- resolves the corresponding image file;
-- normalizes the record structure;
-- generates `text_for_embedding`;
-- writes a sample-level JSONL index.
-
-The output files are stored under:
-
-```text
-data/processed/
-```
-
-Some preprocessing scripts contain dataset-specific local paths. These paths must be updated when the raw data is stored in a different location.
-
----
-
-### 2. Merge Academic-5
-
-Merge the five processed datasets:
+Merge all processed samples:
 
 ```bash
 python scripts/06_merge_academic_5.py
 ```
 
-Output:
+Expected output:
 
 ```text
 data/processed/academic_5_merged.jsonl
 ```
 
-Verify the total number of records:
+Expected number of records:
+
+```text
+2,500
+```
+
+Check the number of samples:
 
 ```bash
 wc -l data/processed/academic_5_merged.jsonl
 ```
 
-Expected result:
-
-```text
-2500 data/processed/academic_5_merged.jsonl
-```
-
 ---
 
-### 3. Generate fused multimodal embeddings
+## 9. Build Multimodal Embeddings
 
-Set the DashScope API key:
-
-```bash
-export DASHSCOPE_API_KEY="<your_api_key>"
-```
-
-The API key must not be written directly into the source code or committed to GitHub.
-
-Run a single-record smoke test:
-
-```bash
-python scripts/07_build_qwenvl_embeddings.py --limit 1
-```
-
-Continue with additional records:
-
-```bash
-python scripts/07_build_qwenvl_embeddings.py --limit 10
-```
-
-Run the complete remaining collection:
+Generate embeddings using Qwen3-VL:
 
 ```bash
 python scripts/07_build_qwenvl_embeddings.py
 ```
 
-The script sends the following inputs to the embedding model:
+Expected outputs:
 
 ```text
-image + text_for_embedding
-```
-
-Current embedding configuration:
-
-```text
-Model: qwen3-vl-embedding
-Fusion mode: enabled
-Dimension: 1024
-```
-
-The script supports resumable execution. IDs already present in the successful raw embedding file are skipped automatically.
-
-Available options:
-
-```text
---limit N
-    Process only the first N pending records.
-
---reset
-    Delete all existing embedding outputs and restart from the beginning.
-```
-
-Use `--reset` carefully because it causes all successful API calls to be repeated.
-
-Outputs:
-
-```text
-data/vector_db/academic_5_embeddings_raw.jsonl
 data/vector_db/academic_5_embeddings.npy
 data/vector_db/academic_5_metadata.jsonl
-data/vector_db/academic_5_embedding_failed.jsonl
 ```
 
-The script also checks:
-
-- image path validity;
-- embedding dimension consistency;
-- invalid JSONL records;
-- NaN values;
-- infinite values;
-- API error messages;
-- interrupted runs.
-
----
-
-### 4. Validate embedding outputs
-
-Check the record counts:
-
-```bash
-wc -l data/vector_db/academic_5_embeddings_raw.jsonl
-wc -l data/vector_db/academic_5_metadata.jsonl
-wc -l data/vector_db/academic_5_embedding_failed.jsonl
-```
-
-Expected output:
+Expected embedding shape:
 
 ```text
-2500 data/vector_db/academic_5_embeddings_raw.jsonl
-2500 data/vector_db/academic_5_metadata.jsonl
-0 data/vector_db/academic_5_embedding_failed.jsonl
+(2500, 1024)
 ```
 
-Validate the NumPy matrix:
+Check the embedding matrix:
 
 ```bash
 python - <<'PY'
 import numpy as np
 
-x = np.load("data/vector_db/academic_5_embeddings.npy")
+vectors = np.load(
+    "data/vector_db/academic_5_embeddings.npy"
+)
 
-print("Shape:", x.shape)
-print("Dtype:", x.dtype)
-print("NaN:", np.isnan(x).sum())
-print("Inf:", np.isinf(x).sum())
+print("Shape:", vectors.shape)
+print("Dtype:", vectors.dtype)
 PY
-```
-
-Expected output:
-
-```text
-Shape: (2500, 1024)
-Dtype: float32
-NaN: 0
-Inf: 0
 ```
 
 ---
 
-### 5. Build the Zvec index
+## 10. Build the Zvec Index
 
-Run:
+Build the Academic-5 Zvec collection:
 
 ```bash
 python scripts/08_build_zvec_index.py
 ```
 
-The script reads:
+Expected collection path:
 
 ```text
-data/vector_db/academic_5_embeddings.npy
-data/vector_db/academic_5_metadata.jsonl
+data/vector_db/academic_5_zvec/academic_collection
 ```
-
-and builds the local Zvec collection under:
-
-```text
-data/vector_db/academic_5_zvec/
-```
-
-The default collection is:
-
-```text
-academic_collection
-```
-
-Each indexed document contains:
-
-- the 1024-dimensional vector;
-- dataset identity;
-- sample ID;
-- question;
-- image path;
-- task metadata;
-- domain metadata;
-- reasoning ability metadata.
 
 ---
 
-### 6. Retrieve similar samples
+## 11. Basic Vector Search
 
-Text query example:
+The original retrieval system can be used directly.
+
+### Text-only search
 
 ```bash
-export DASHSCOPE_API_KEY="<your_api_key>"
-
 python scripts/09_search_zvec.py \
   --query "scientific plots, oscillation counting and trend analysis" \
   --topk 10
 ```
 
-Image-text query example:
+### Text-and-image search
 
 ```bash
 python scripts/09_search_zvec.py \
-  --query "analyze the scientific behavior shown in this figure" \
+  --query "find benchmarks requiring understanding of this plot" \
   --image /path/to/query_image.png \
   --topk 10
 ```
 
-Supported filters:
-
-```text
---dataset NAME
---domain NAME
---task-type NAME
-```
-
-The query is embedded using the same model and embedding dimension as the indexed samples, ensuring that queries and stored vectors remain in the same representation space.
-
----
-
-### 7. Aggregate dataset recommendations
-
-Run:
+### Metadata filtering
 
 ```bash
-python scripts/10_aggregate_recommendation.py \
-  --query "scientific chart understanding and numerical reasoning" \
-  --topk 50
-```
-
-The aggregation stage converts sample-level retrieval results into dataset-level recommendations.
-
-It summarizes:
-
-- how frequently each dataset appears;
-- the similarity scores of retrieved samples;
-- the relevance of each dataset to the query;
-- representative examples from the top-ranked datasets.
-
-Available options:
-
-```text
---top-datasets N
---examples-per-dataset N
---output PATH
-```
-
-This allows the system to answer not only:
-
-```text
-Which individual samples are relevant?
-```
-
-but also:
-
-```text
-Which benchmark datasets are most appropriate for evaluating this capability?
+python scripts/09_search_zvec.py \
+  --query "quantum experiment trend analysis" \
+  --dataset QCalEval \
+  --domain quantum_physics \
+  --task-type trend_analysis \
+  --topk 10
 ```
 
 ---
 
-## Example Use Cases
+## 12. Run EvalAgent
 
-The system can be used to identify benchmarks for capabilities such as:
-
-- scientific chart understanding;
-- numerical reasoning;
-- mathematical visual reasoning;
-- trend analysis;
-- plot interpretation;
-- experimental diagnosis;
-- knowledge-based science QA;
-- calibration figure understanding;
-- multi-choice visual reasoning;
-- image-grounded problem solving.
-
-A query can describe a model, a target task, a desired capability, or a new evaluation requirement.
-
----
-
-## Engineering Features
-
-### Resumable embedding generation
-
-The embedding pipeline records successful samples incrementally. If execution is interrupted, the script resumes from unfinished IDs rather than repeating completed API calls.
-
-### Explicit failure tracking
-
-Failed samples are written to a separate JSONL file together with the sample ID, image path, and API error message.
-
-### Metadata alignment
-
-The vector matrix and metadata file are generated from the same successful raw embedding stream, preserving row-level correspondence.
-
-### Dataset-level aggregation
-
-The system does not stop at nearest-neighbor search. It converts sample retrieval results into a benchmark recommendation, which is more directly useful for evaluation planning.
-
-### Modular pipeline
-
-Each stage is implemented as an independent script, making the system easier to inspect, debug, replace, and extend.
-
----
-
-## Data and Security Notes
-
-### API credentials
-
-The following scripts require `DASHSCOPE_API_KEY`:
-
-```text
-scripts/07_build_qwenvl_embeddings.py
-scripts/09_search_zvec.py
-scripts/10_aggregate_recommendation.py
-```
-
-Set the key through an environment variable:
+Run the complete evaluation recommendation workflow:
 
 ```bash
-export DASHSCOPE_API_KEY="<your_api_key>"
+python scripts/evalagent/03_run_evalagent.py \
+  --request-id demo_quantum \
+  --requirement "我想评测一个用于量子实验图理解的多模态模型，重点关注趋势分析、参数提取和科学推理，希望使用中等到困难样本，预算20条。"
 ```
 
-Do not commit:
-
-- `.env`;
-- API keys;
-- access tokens;
-- credentials embedded in shell history;
-- screenshots containing complete credentials.
-
-### Large files
-
-The following directories are normally excluded from Git:
+The workflow performs:
 
 ```text
-.venv/
-data/raw/
-data/vector_db/
+Requirement parsing
+→ Retrieval query construction
+→ Query embedding generation
+→ Zvec candidate retrieval
+→ Metadata-aware reranking
+→ Evaluation sample selection
+→ Coverage analysis
+→ JSON report generation
 ```
 
-Raw benchmark data, images, generated embeddings, and local vector indexes should be transferred separately through approved storage.
+The result is saved to:
 
-### Dataset licenses
-
-This repository contains the processing and retrieval code. The original datasets remain subject to their own licenses, access conditions, and redistribution restrictions.
-
----
-
-## Completed Status
-
-The current version has completed the complete Academic-5 retrieval pipeline:
-
-- [x] QCalEval preprocessing
-- [x] ScienceQA preprocessing
-- [x] ChartQA preprocessing
-- [x] PlotQA preprocessing
-- [x] MathVista preprocessing
-- [x] unified sample-level schema
-- [x] balanced 2,500-sample merged collection
-- [x] image-text fused embedding generation
-- [x] 2,500 successful 1024-dimensional embeddings
-- [x] embedding validation
-- [x] metadata alignment
-- [x] Zvec collection construction
-- [x] text retrieval
-- [x] multimodal retrieval
-- [x] metadata filtering
-- [x] dataset-level aggregation
-- [x] representative sample recommendation
-- [x] resumable API execution
-- [x] detailed error logging
+```text
+data/evaluation_runs/demo_quantum_recommendation.json
+```
 
 ---
 
-## Future Work
+## 13. Example Parsed Requirement
 
-Potential extensions include:
+Input:
 
-- configuration-driven dataset paths;
-- automatic data validation before embedding;
-- retrieval evaluation with Recall@K and ranking metrics;
-- comparison of alternative multimodal embedding models;
-- hybrid sparse-dense retrieval;
-- reranking;
-- additional academic and domain-specific benchmarks;
-- automated benchmark coverage analysis;
-- a REST API;
-- a lightweight Web interface;
-- continuous integration and unit tests.
+```text
+我想评测一个用于量子实验图理解的多模态模型，
+重点关注趋势分析、参数提取和科学推理，
+希望使用中等到困难样本，预算20条。
+```
+
+Structured profile:
+
+```json
+{
+  "model_name": null,
+  "target_domains": [
+    "quantum_physics"
+  ],
+  "target_tasks": [
+    "scientific_reasoning",
+    "trend_analysis",
+    "parameter_extraction"
+  ],
+  "target_abilities": [
+    "scientific_reasoning",
+    "trend_analysis",
+    "parameter_extraction"
+  ],
+  "preferred_difficulties": [
+    "medium",
+    "hard"
+  ],
+  "preferred_datasets": [],
+  "evaluation_budget": 20
+}
+```
 
 ---
 
-## License
+## 14. Example Recommendation Result
 
-The source code license can be added according to the intended release policy.
+For a quantum experiment evaluation request, EvalAgent selected:
 
-The original datasets are not relicensed by this repository and remain governed by their respective licenses and terms of use.
+```text
+Recommended samples: 20
+Primary dataset: QCalEval
+Primary domain: quantum_physics
+```
+
+Task distribution:
+
+```text
+scientific_reasoning: 12
+trend_analysis: 7
+parameter_extraction: 1
+```
+
+Difficulty distribution after metadata correction:
+
+```text
+medium: 17
+hard: 2
+easy: 1
+```
+
+The result demonstrates that the system can identify domain-specific samples while respecting task and difficulty preferences.
+
+---
+
+## 15. Output Format
+
+The generated recommendation file contains:
+
+```json
+{
+  "evalagent_version": "phase1_v1",
+  "request_id": "demo_quantum",
+  "raw_requirement": "",
+  "query_profile": {},
+  "retrieval_query": "",
+  "retrieval": {
+    "embedding_model": "qwen3-vl-embedding",
+    "embedding_dimension": 1024,
+    "candidate_k": 60,
+    "returned_candidates": 60,
+    "selected_samples": 20
+  },
+  "recommended_datasets": {},
+  "coverage_summary": {
+    "datasets": {},
+    "domains": {},
+    "tasks": {},
+    "abilities": {},
+    "difficulties": {}
+  },
+  "recommended_samples": [],
+  "recommendation_summary": ""
+}
+```
+
+Each recommended sample contains:
+
+```json
+{
+  "rank": 1,
+  "sample_id": "",
+  "dataset_name": "",
+  "question": "",
+  "image_path": "",
+  "task_type": "",
+  "domain": "",
+  "difficulty": "",
+  "ability": [],
+  "distance": 0.0,
+  "similarity_score": 0.0,
+  "metadata_match_score": 0.0,
+  "final_score": 0.0,
+  "recommendation_reason": ""
+}
+```
+
+---
+
+## 16. Phase 1 Status
+
+The current implementation supports:
+
+- [x] Five-dataset benchmark integration
+- [x] Unified sample format
+- [x] Multimodal embedding generation
+- [x] Zvec vector indexing
+- [x] Text and image retrieval
+- [x] Natural-language requirement parsing
+- [x] Structured evaluation profiles
+- [x] Metadata-aware reranking
+- [x] Difficulty preference handling
+- [x] Dataset recommendation statistics
+- [x] Capability coverage analysis
+- [x] JSON evaluation recommendation reports
+
+---
+
+## 17. Current Limitations
+
+The current Phase 1 system has several limitations:
+
+1. Requirement parsing is rule-based rather than LLM-based.
+2. Difficulty is treated as a preference rather than a strict constraint.
+3. Sample selection does not yet guarantee balanced task allocation.
+4. Some datasets contain incomplete metadata.
+5. EvalAgent recommends evaluation samples but does not yet execute the target model.
+6. Automatic scoring and model capability diagnosis are not yet implemented.
+
+---
+
+## 18. Planned Development
+
+Future work will extend EvalAgent from benchmark recommendation to automated model evaluation.
+
+Planned components include:
+
+### Coverage-Aware Sample Selection
+
+Allocate evaluation samples across target tasks and abilities instead of relying only on ranking scores.
+
+### Hard and Soft Constraints
+
+Distinguish between:
+
+```text
+Prefer medium and hard samples
+```
+
+and:
+
+```text
+Use only medium and hard samples
+```
+
+### Target Model Execution
+
+Automatically call a user-provided multimodal model API on selected benchmark samples.
+
+### Automatic Evaluation
+
+Support:
+
+- Exact-match scoring
+- Multiple-choice accuracy
+- Numerical tolerance
+- Semantic matching
+- LLM-as-a-judge evaluation
+
+### Model Capability Profiling
+
+Generate summaries of:
+
+- Strong capabilities
+- Weak capabilities
+- Dataset-level performance
+- Task-level performance
+- Failure patterns
+- Representative error cases
+
+### Automated Evaluation Reports
+
+Generate complete Markdown or web-based reports containing:
+
+- Evaluation objectives
+- Sample composition
+- Dataset distribution
+- Task and ability coverage
+- Model performance
+- Failure analysis
+- Improvement recommendations
+
+---
+
+## 19. Project Positioning
+
+The original system provides multimodal benchmark retrieval.
+
+EvalAgent extends this retrieval foundation into an evaluation planning agent by adding:
+
+```text
+Natural-language understanding
++ Structured requirement extraction
++ Metadata-aware decision logic
++ Evaluation coverage analysis
++ Explainable recommendation output
+```
+
+The long-term objective is to build an end-to-end system for:
+
+```text
+Evaluation requirement
+→ Benchmark planning
+→ Model execution
+→ Automatic scoring
+→ Capability diagnosis
+→ Evaluation report
+```
+
+---
+
+## 20. License
+
+This repository is intended for academic research and experimental development.
+
+The original licenses and usage conditions of QCalEval, ScienceQA, ChartQA, PlotQA, MathVista, Qwen, and Zvec should be followed when using the corresponding datasets, models, and software.
