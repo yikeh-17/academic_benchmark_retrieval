@@ -39,3 +39,7 @@ Thumbs.db
 
 # Ignore parent repo metadata if present
 .git/
+
+# EvalAgent runtime outputs
+data/evaluation_runs/*
+!data/evaluation_runs/.gitkeep
